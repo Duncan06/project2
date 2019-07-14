@@ -2,12 +2,15 @@ document.addEventListener('DOMContentLoaded', () => {
   var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
 
   socket.on('connect', () => {
-    socket.emit('message', {'userschat': userschat});
+    document.querySelector('.form-container').onsubmit = () => {
+      const message = document.querySelector('#message').innerHTML;
+      socket.emit('message', {'userschat': userschat});
   });
 
   socket.on('chat', data => {
-    const li = document.createElement('li');
-    li.innerHTML = `Message sent: ${data.selection}`
-    document.querySelector(#messages).append(li)
-  })
+    const post = document.createElement('div');
+    post.clasName= 'container';
+    post.innerHTML= message;
+    document.querySelector('.form-container-chat').append(message);
+  });
 });
