@@ -7,13 +7,20 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 socketio = SocketIO(app)
 
-
-chat = {"userschat": ""}
+channels = []
+usernames = []
+chat = {}
 @app.route("/")
 def index():
-    return render_template("login.html")
+    if 'username' in session:
+        username = session["username"]
+        return render_template("chat.html")
+    if request.method == "POST":
+        session['username'] = request.form.get("username")
+        return render_template("chat.html")
+    return render_template("index.html")
 
-@socket.io("message")
+@socketio.on("message")
 def chatroom():
     message = data["message"]
     chat["userchat"] = request.form.get("message")
