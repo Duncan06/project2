@@ -24,7 +24,7 @@ def index():
     return render_template("index.html")
 
 @socketio.on("message")
-def chatroom():
+def chatroom(data):
     message = data["message"]
-    chat["userchat"] = request.form.get("message")
+    chat["userchat"] = message
     emit("chat", chat, broadcast=True)
