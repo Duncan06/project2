@@ -17,10 +17,10 @@ chat = {}
 def index():
     if 'username' in session:
         username = session["username"]
-        return render_template("chat.html")
+        return render_template("chat.html", chat=chat)
     if request.method == "POST":
         session['username'] = request.form.get("username")
-        return render_template("chat.html")
+        return render_template("chat.html", chat=chat)
     return render_template("index.html")
 
 @socketio.on("chat")
