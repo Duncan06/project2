@@ -23,8 +23,8 @@ def index():
         return render_template("chat.html", chat=chat)
     return render_template("index.html")
 
-@socketio.on("chat")
+@socketio.on("message")
 def chatroom(data):
-    selection = data["selection"]
-    chat = {session["username"]: selection}
+    message = data["message"]
+    chat = {session["username"]: message}
     emit("chat", chat, broadcast=True)

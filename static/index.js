@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('.form-container').onsubmit = () => {
       const message = document.querySelector('#message').value;
       console.log('message made');
-      socket.emit('message', {'userschat': message});
+      socket.emit('message', {'message': message});
     };
   });
 
