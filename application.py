@@ -26,5 +26,5 @@ def index():
 @socketio.on("message")
 def chatroom(data):
     message = data["message"]
-    chat = {session["username"]: message}
+    chat = {"user": message}
     emit("chat", chat, broadcast=True)

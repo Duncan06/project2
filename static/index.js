@@ -11,9 +11,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   socket.on('chat', data => {
     const post = document.createElement('div');
-    console.log('making message');
-    post.clasName= 'container';
-    post.innerHTML= `${data.key}: ${data.value}`;
+    post.className = 'container';
+    post.innerHTML = `${data.user}`;
     console.log('message sent');
     document.querySelector('.form-container-chat').append(post);
   });
