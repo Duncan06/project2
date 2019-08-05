@@ -15,5 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
     post.innerHTML = `${data.user}`;
     console.log('message sent');
     document.querySelector('.form-container-chat').append(post);
+    socket.emit('post', {'post': post});
   });
 });

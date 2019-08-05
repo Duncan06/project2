@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, session, render_template, url_for, request
+from flask import Flask, session, render_template, url_for, request, jsonify
 from flask_session import Session
 from flask_socketio import SocketIO, emit
 
@@ -17,10 +17,10 @@ chat = {}
 def index():
     if 'username' in session:
         username = session["username"]
-        return render_template("chat.html", chat=chat)
+        return render_template("chat.html", chat=jsonify(chat))
     if request.method == "POST":
         session['username'] = request.form.get("username")
-        return render_template("chat.html", chat=chat)
+        return render_template("chat.html", chat=jsonify(chat))
     return render_template("index.html")
 
 @socketio.on("message")
