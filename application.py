@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, session, render_template, url_for, request, jsonify
+from flask import Flask, session, render_template, url_for, request, jsonify, redirect
 from flask_session import Session
 from flask_socketio import SocketIO, emit
 
@@ -23,8 +23,12 @@ def index():
         return redirect(url_for('chat' chat=chat))
     return render_template("index.html")
 
+@app.route("/chat", methods=["POST"])
+def chat():
+    return jsonify(chat)
+
 @socketio.on("message")
 def chatroom(data):
     message = data["message"]
-    chat = {"user": message}
+    chat = {"user": session["username"], "messages": message}
     emit("chat", chat, broadcast=True)
