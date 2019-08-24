@@ -3,6 +3,7 @@ import os
 from flask import Flask, session, render_template, url_for, request, jsonify, redirect
 from flask_session import Session
 from flask_socketio import SocketIO, emit
+from datetime import datetime
 
 app = Flask(__name__, template_folder='../../scripts/project2')
 app.config['SESSION_TYPE'] = 'filesystem'
@@ -17,18 +18,27 @@ chat = {}
 def index():
     if 'username' in session:
         username = session["username"]
-        return redirect(url_for('chat' chat=chat))
+        return redirect(url_for('chat'))
     if request.method == "POST":
-        session['username'] = request.form.get("username")
-        return redirect(url_for('chat' chat=chat))
+        username = request.form.get("username")
+        if username in usernames:
+            return render_template("error.html", message="Username already taken.")
+        usernames.append(username)
+        session['username'] = username
+        return redirect(url_for('chat'))
     return render_template("index.html")
 
-@app.route("/chat", methods=["POST"])
+@app.route("/chatroom", methods=["GET", "POST"])
+def chatrooms():
+    if request.method == "POST":
+
+@app.route("/chat", methods=["GET", "POST"])
 def chat():
-    return jsonify(chat)
+    if request.method == "POST":
+        return jsonify(chat)
 
 @socketio.on("message")
 def chatroom(data):
     message = data["message"]
-    chat = {"user": session["username"], "messages": message}
+    chat = {"user": username, "messages": message}
     emit("chat", chat, broadcast=True)
