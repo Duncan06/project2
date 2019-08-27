@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% blockbody %}
+  {% if channels %}
+    <b> Channels </b>
+    <ul id = "channels">
+      {% for channel in channels %}
+        <li>
+          <a href="{{ url_for('chat', chatid = loop.index0)}}"> {{ channel }} </a>
+        </li>
+      <% endfor %>
+    </ul>
+  {% endif %}
+
+  <b> Need a new channel? </b>
+  <form action=" {{ url_for('chat', chatid = channels | length+1)}}" method="post">
+    <input type="text" class="form-control" id="channel_name" placeholder="Enter username">
+  </form>
+  <script src="{{ url_for('static', filename='index.js') }}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.dev.js"></script>
+{% endblock %}
