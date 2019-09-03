@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 
-{% blockbody %}
+{% block body %}
   {% if channels %}
     <b> Channels </b>
     <ul id = "channels">
@@ -8,7 +8,7 @@
         <li>
           <a href="{{ url_for('chat', chatid = loop.index0)}}"> {{ channel }} </a>
         </li>
-      <% endfor %>
+      {% endfor %}
     </ul>
   {% endif %}
 

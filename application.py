@@ -13,7 +13,7 @@ Session(app)
 
 channels = []
 usernames = []
-chat = {}
+chatdict = {}
 @app.route("/", methods=["GET", "POST"])
 def index():
     if "username" in session:
@@ -23,12 +23,12 @@ def index():
         return redirect(url_for('chatrooms'))
     return render_template("index.html")
 
-@app.route("/chatroom", methods=["GET", "POST"])
+@app.route("/chatrooms", methods=["GET", "POST"])
 def chatrooms():
     if request.method == "POST":
         username = request.form.get("username")
-        if username in usernames:
-            return render_template("error.html", message="Username already taken.")
+        ##if username in usernames:
+            ##return render_template("error.html", message="Username already taken.")
         usernames.append(username)
         session["username"] = username
 
@@ -42,23 +42,39 @@ def chat(chatid):
     if request.method == "POST":
         channel_name = request.form.get("channel_name")
         if channel_name in channels:
-            render_template("error.html", message="Error, channel name already exists.")
+            return render_template("error.html", message="Error, channel name already exists.")
 
         channels.append(channel_name)
         chatdict[channel_name] = []
 
     if request.method == "GET":
         if username not in session:
-            render_template("error.html", message="Please sign in.")
+            return render_template("error.html", message="Please sign in.")
         if len(channels) < chatid:
-            render_template("error.html", message="Invalid channel.")
+            return render_template("error.html", message="Invalid channel.")
 
     session["chatid"] = chatid
 
-    render_template("chat.html", username=session["username"])
+    return render_template("chat.html", username=session["username"])
 
 @socketio.on("message")
 def chatroom(data):
     message = data["message"]
-    chat = {"user": username, "messages": message}
-    emit("chat", chat, broadcast=True)
+    time = datetime.now.now.strftime("%c")
+    chat = {"user": session["username"], "messages": message, "time": time}
+    currentlist = chatdict[channels[session["chatid"]]]
+
+    if currentlist > 100:
+        currentlist.pop(0)
+
+    currentlist.append(chat)
+    emit("chat", {chat, {"chatid" : str(session["chatid"])}}, broadcast=True)
+
+@socketio.on("submit channel")
+def submit_channel(data):
+
+    emit("cast channel", {"selection": data["selection"], "chatid" : len(channels) + 2}, broadcast = True)
+
+@app.route("/listmessages", methods = ["POST"])
+def listmessages():
+    return jsonify({"message" : chatdict[channels[session["chatid"]]], "chatid" : session["chatid"]})
