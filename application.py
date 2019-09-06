@@ -43,7 +43,7 @@ def chatrooms():
         usernames.append(username)
         session["username"] = username
 
-    if request.method == "GET":
+    if request.method == "GET" and "username" not in sesison:
         return render_template("error.html", message="Please login.")
 
     return render_template("chatrooms.html", channels = channels, username=session["username"])
@@ -84,8 +84,8 @@ def chatroom(data):
 @socketio.on("submit channel")
 def submit_channel(data):
 
-    emit("cast channel", {"selection": data["selection"], "chatid" : len(channels) + 2}, broadcast = True)
+    emit("cast channel", {"selection": data["selection"], "chatid" : len(channels) + 1}, broadcast = True)
 
 @app.route("/listmessages", methods = ["POST"])
 def listmessages():
-    return jsonify({"message" : chatdict[channels[session["chatid"]]], "chatid" : session["chatid"]})
+    return jsonify({"message" : chatdict[channels[session["chatid"] - 1]], "chatid" : session["chatid"]})
