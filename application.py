@@ -19,16 +19,27 @@ def index():
     if "username" in session:
         if "chatid" in session:
             if len(channels) >= session["chatid"]:
-                return redirect(url_for('chat'))
+                return redirect(url_for('chat', chatid=session["chatid"])))
         return redirect(url_for('chatrooms'))
     return render_template("index.html")
+
+
+@app.route("/logout", methods=["GET"])
+def logout():
+    try:
+        signout = session.pop("username")
+    except KeyError:
+        return render_template("error.html", message="Please sign in first.")
+    else:
+        usernames.remove(signout)
+    return redirect("index.html")
 
 @app.route("/chatrooms", methods=["GET", "POST"])
 def chatrooms():
     if request.method == "POST":
         username = request.form.get("username")
-        ##if username in usernames:
-            ##return render_template("error.html", message="Username already taken.")
+        if username in usernames:
+            return render_template("error.html", message="Username already taken.")
         usernames.append(username)
         session["username"] = username
 
