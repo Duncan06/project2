@@ -6,6 +6,7 @@ from flask_socketio import SocketIO, emit
 from datetime import datetime
 
 app = Flask(__name__, template_folder='../../scripts/project2')
+app.config["SESSION_PERMANENT"] = False
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config["SECRET_KEY"] = 'k45wenk12nlsdfi8547jnk335j3'
 socketio = SocketIO(app)
@@ -14,12 +15,13 @@ Session(app)
 channels = []
 usernames = []
 chatdict = {}
+
 @app.route("/", methods=["GET", "POST"])
 def index():
     if "username" in session:
         if "chatid" in session:
             if len(channels) >= session["chatid"]:
-                return redirect(url_for('chat', chatid=session["chatid"])))
+                return redirect(url_for('chat', chatid=session["chatid"]))
         return redirect(url_for('chatrooms'))
     return render_template("index.html")
 
@@ -32,7 +34,7 @@ def logout():
         return render_template("error.html", message="Please sign in first.")
     else:
         usernames.remove(signout)
-    return redirect("index.html")
+    return redirect(url_for("index.html"))
 
 @app.route("/chatrooms", methods=["GET", "POST"])
 def chatrooms():
@@ -43,7 +45,7 @@ def chatrooms():
         usernames.append(username)
         session["username"] = username
 
-    if request.method == "GET" and "username" not in sesison:
+    if request.method == "GET" and "username" not in session:
         return render_template("error.html", message="Please login.")
 
     return render_template("chatrooms.html", channels = channels, username=session["username"])
@@ -73,13 +75,13 @@ def chatroom(data):
     message = data["message"]
     time = datetime.now.now.strftime("%c")
     chat = {"user": session["username"], "messages": message, "time": time}
-    currentlist = chatdict[channels[session["chatid"]]]
+    currentlist = chatdict[channels[session["chatid"] - 1]]
 
     if currentlist > 100:
         currentlist.pop(0)
 
     currentlist.append(chat)
-    emit("chat", {chat, {"chatid" : str(session["chatid"])}}, broadcast=True)
+    emit("chat", {**chat, **{"chatid" : str(session["chatid"])}}, broadcast=True)
 
 @socketio.on("submit channel")
 def submit_channel(data):
@@ -88,4 +90,4 @@ def submit_channel(data):
 
 @app.route("/listmessages", methods = ["POST"])
 def listmessages():
-    return jsonify({"message" : chatdict[channels[session["chatid"] - 1]], "chatid" : session["chatid"]})
+    return jsonify({**{"message" : chatdict[channels[session["chatid"] - 1]]}, **{"chatid" : session["chatid"]}})

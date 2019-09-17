@@ -4,7 +4,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="{{ url_for('static', filename='index.js') }}"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.dev.js"></script>
-  <script src=""></script>
   <style>
     body {
       font-family: Arial, Helvetica, sans-serif;
@@ -130,7 +129,7 @@
   </form>
 </div>
 <div class="chat-popup" id="myForm">
-  <form action = "" method = POST class="form-container">
+  <form action = "javascript:void(0);" method = "post" class="form-container">
     <h1>Messenger</h1>
     <label for="message"><b>Message</b></label>
     <textarea placeholder="Enter message" name="message" id="message" required></textarea>
